@@ -2,8 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 /*
 Создать окно клиента чата. Окно должно содержать JtextField для ввода логина, пароля, IP-адреса сервера,
@@ -36,7 +36,7 @@ public class ChatWindow extends JFrame {
     JButton btnLogin = new JButton("Подключиться");
     JTextArea textChat = new JTextArea();
     JScrollPane scrollPane = new JScrollPane(textChat);
-    JPanel panelMain = new JPanel(new GridLayout(10, 1));
+    JPanel panelMain = new JPanel(new GridLayout(9, 1));
 
     JLabel jlb6 = new JLabel("Введите ваше сообщение: ");
     JTextArea chatMessage = new JTextArea();
@@ -65,18 +65,16 @@ public class ChatWindow extends JFrame {
         panelMain.add(panel2);
         panelMain.add(panel3);
         panelMain.add(panel4);
-        btnLogin.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
+        btnLogin.addActionListener(e -> {
+            try (
                     FileInputStream fr = new FileInputStream("chat.txt");
-                    int b;
-                    while ((b = fr.read()) != -1) {
-                        textChat.append(Character.valueOf((char) b).toString());
-                    }
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                    InputStreamReader isr = new InputStreamReader(fr, StandardCharsets.UTF_8)){
+                int b;
+                while ((b = isr.read()) != -1) {
+                    textChat.append(Character.valueOf((char) b).toString());
                 }
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
             }
         });
         panelMain.add(btnLogin);
@@ -85,6 +83,17 @@ public class ChatWindow extends JFrame {
 
         panelMain.add(jlb6);
         panelMain.add(chatMessage);
+        pushMsg.addActionListener(e -> {
+            try (
+                    FileOutputStream fos = new FileOutputStream("chat.txt");
+                    OutputStreamWriter osr = new OutputStreamWriter(fos)){
+                textChat.append(chatMessage.getText() + "\n");
+                osr.append(textChat.getText());
+                chatMessage.setText(null);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
         panelMain.add(pushMsg);
         add(panelMain);
 
