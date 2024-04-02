@@ -1,17 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.awt.event.*;
 
-/*
-Создать окно клиента чата. Окно должно содержать JtextField для ввода логина, пароля, IP-адреса сервера,
-порта подключения
-к серверу, область ввода сообщений, JTextArea область просмотра сообщений чата и JButton подключения к серверу
-и отправки сообщения в чат. Желательно сразу сгруппировать компоненты, относящиеся
-к серверу сгруппировать на JPanel сверху экрана, а компоненты, относящиеся к отправке сообщения – на JPanel снизу
- */
 public class ChatWindow extends JFrame {
     private static final int WINDOW_HEIGHT = 555;
     private static final int WINDOW_WIDTH = 507;
@@ -41,8 +31,8 @@ public class ChatWindow extends JFrame {
     JLabel jlb6 = new JLabel("Введите ваше сообщение: ");
     JTextArea chatMessage = new JTextArea();
     JButton pushMsg = new JButton("Отправить сообщение");
-//    String logChat = "";
-//    char[] bufferLog;
+    Server server = new Server();
+    private EnterAction enterAction = new EnterAction("Submit", this);
 
     public ChatWindow() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -65,37 +55,25 @@ public class ChatWindow extends JFrame {
         panelMain.add(panel2);
         panelMain.add(panel3);
         panelMain.add(panel4);
-        btnLogin.addActionListener(e -> {
-            try (
-                    FileInputStream fr = new FileInputStream("chat.txt");
-                    InputStreamReader isr = new InputStreamReader(fr, StandardCharsets.UTF_8)){
-                int b;
-                while ((b = isr.read()) != -1) {
-                    textChat.append(Character.valueOf((char) b).toString());
-                }
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
+        btnLogin.addActionListener(e -> server.loadChat(textChat));
         panelMain.add(btnLogin);
         textChat.setEditable(false);
         panelMain.add(scrollPane);
-
         panelMain.add(jlb6);
         panelMain.add(chatMessage);
-        pushMsg.addActionListener(e -> {
-            try (
-                    FileOutputStream fos = new FileOutputStream("chat.txt");
-                    OutputStreamWriter osr = new OutputStreamWriter(fos)){
-                textChat.append(chatMessage.getText() + "\n");
-                osr.append(textChat.getText());
-                chatMessage.setText(null);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
+
+        int condition = JComponent.WHEN_FOCUSED; // only want this when textarea has focus
+        InputMap inputMap = chatMessage.getInputMap(condition); // get input and action maps
+        ActionMap actionMap = chatMessage.getActionMap();
+        // bind to the enter key stroke:
+        KeyStroke enterStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+        String key = enterStroke.toString();  // key to bind input to action
+        // bind the enter key stroke to the enter action:
+        inputMap.put(enterStroke, key);
+        actionMap.put(key, enterAction);
+
+        pushMsg.addActionListener(e -> server.sendMessage(textChat, chatMessage));
         panelMain.add(pushMsg);
         add(panelMain);
-
     }
 }
