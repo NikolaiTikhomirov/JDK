@@ -1,7 +1,6 @@
 package myCollection;
 
 import java.io.InputStream;
-import java.io.Serializable;
 
 public class Box<T extends Comparable, K extends Number, V extends InputStream> {
     T valueT;

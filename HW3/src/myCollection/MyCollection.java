@@ -1,7 +1,6 @@
 package myCollection;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 /* Написать итератор по массиву.
@@ -10,11 +9,11 @@ import java.util.NoSuchElementException;
 Но также, особенно в других языках программирования, возможно встретить итераторы, реализующие дополнительную логику.
 */
 public class MyCollection<T> {
-    Object[] value;
+    public Object[] value;
     private int size = 0;
     private int currentIndex = 0;
 
-    MyCollection() {
+    public MyCollection() {
         value = new Object[10];
     }
 
