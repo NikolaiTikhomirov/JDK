@@ -41,7 +41,7 @@ public class MontyHallGame {
                         }
                         saveResults(stepTwo);
                     }
-                    else cheking();
+                    else stepTwo();
                 }
 
 
@@ -64,7 +64,7 @@ public class MontyHallGame {
                         }
                         saveResults(stepTwo);
                     }
-                    else cheking();
+                    else stepTwo();
                 }
 
 
@@ -83,7 +83,7 @@ public class MontyHallGame {
                         }
                         saveResults(stepTwo);
                     }
-                    else cheking();
+                    else stepTwo();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -174,7 +174,7 @@ public class MontyHallGame {
         return allGameResults.toString();
     }
 
-    private void cheking () {
+    private void stepTwo() {
         List<Integer> toExclude = new ArrayList<>(Arrays.asList(1, 2, 3));
         System.out.println("За дверью " + toExclude.stream().filter(n -> n != userChoice & n != carDoorNum).toList() + " находится коза.");
         Boolean stepTwo = userChoiceStepTwo();
