@@ -27,7 +27,7 @@ public class MontyHallGame {
             try {
                 userChoiceStepOne();
                 if (carDoorNum == 1) {
-                    if (userChoice == 1) {
+                    if (userChoice.equals(carDoorNum)) {
                         Integer rand = random.nextInt(2, 4);
                         System.out.println("За дверью " + rand + " находится коза.");
                         Boolean stepTwo = userChoiceStepTwo();
@@ -41,39 +41,17 @@ public class MontyHallGame {
                         }
                         saveResults(stepTwo);
                     }
-                    else if (userChoice == 2) {
-                        System.out.println("За дверью " + 3 + " находится коза.");
-                        Boolean stepTwo = userChoiceStepTwo();
-                        if (stepTwo) {
-                            userChoice = 1;
-                        }
-                        saveResults(stepTwo);
-                    }
-                    else if (userChoice == 3) {
-                        System.out.println("За дверью " + 2 + " находится коза.");
-                        Boolean stepTwo = userChoiceStepTwo();
-                        if (stepTwo) {
-                            userChoice = 1;
-                        }
-                        saveResults(stepTwo);
-                    }
+                    else cheking();
                 }
 
 
                 if (carDoorNum == 2) {
-                    if (userChoice == 1) {
-                        System.out.println("За дверью " + 3 + " находится коза.");
-                        Boolean stepTwo = userChoiceStepTwo();
-                        if (stepTwo) {
-                            userChoice = 2;
-                        }
-                        saveResults(stepTwo);
-                    }
-                    else if (userChoice == 2) {
-                        Integer rand = 2;
-                        while (rand == 2) {
+                    if (userChoice.equals(carDoorNum)) {
+                        Integer rand;
+                        do {
                             rand = random.nextInt(1, 4);
                         }
+                        while (rand == 2);
                         System.out.println("За дверью " + rand + " находится коза.");
                         Boolean stepTwo = userChoiceStepTwo();
                         if (stepTwo) {
@@ -86,35 +64,12 @@ public class MontyHallGame {
                         }
                         saveResults(stepTwo);
                     }
-                    else if (userChoice == 3) {
-                        System.out.println("За дверью " + 1 + " находится коза.");
-                        Boolean stepTwo = userChoiceStepTwo();
-                        if (stepTwo) {
-                            userChoice = 2;
-                        }
-                        saveResults(stepTwo);
-                    }
+                    else cheking();
                 }
 
 
                 if (carDoorNum == 3) {
-                    if (userChoice == 1) {
-                        System.out.println("За дверью " + 2 + " находится коза.");
-                        Boolean stepTwo = userChoiceStepTwo();
-                        if (stepTwo) {
-                            userChoice = 3;
-                        }
-                        saveResults(stepTwo);
-                    }
-                    else if (userChoice == 2) {
-                        System.out.println("За дверью " + 1 + " находится коза.");
-                        Boolean stepTwo = userChoiceStepTwo();
-                        if (stepTwo) {
-                            userChoice = 3;
-                        }
-                        saveResults(stepTwo);
-                    }
-                    else if (userChoice == 3) {
+                    if (userChoice.equals(carDoorNum)) {
                         Integer rand = random.nextInt(1, 3);
                         System.out.println("За дверью " + rand + " находится коза.");
                         Boolean stepTwo = userChoiceStepTwo();
@@ -128,6 +83,7 @@ public class MontyHallGame {
                         }
                         saveResults(stepTwo);
                     }
+                    else cheking();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -161,10 +117,7 @@ public class MontyHallGame {
         root: while (addWork) {
             try {
                 System.out.println("Выберите дверь");
-                try {
-                    userChoice = Integer.parseInt(scanner.nextLine());
-                } catch (Exception e) {
-                }
+                userChoice = Integer.parseInt(scanner.nextLine());
                 if (userChoice == null) throw new UserInterClassException("Воспользуйтесь цифрами");
                 if (userChoice < 1 || userChoice > 3)
                     throw new UserInterClassException("Воспользуйтесь цифрами от 1 до 3");
@@ -184,10 +137,7 @@ public class MontyHallGame {
         root: while (addWork) {
             try {
                 System.out.println("Вы хотите изменить свой выбор? (1 - да, 2 - нет)");
-                try {
-                    userChoice = Integer.parseInt(scanner.nextLine());
-                } catch (Exception e) {
-                }
+                userChoice = Integer.parseInt(scanner.nextLine());
                 if (userChoice == null) throw new UserInterClassException("Воспользуйтесь цифрами");
                 if (userChoice < 1 || userChoice > 2)
                     throw new UserInterClassException("Воспользуйтесь цифрами от 1 до 2");
@@ -197,10 +147,7 @@ public class MontyHallGame {
             }
             addWork = false;
         }
-        if (userChoice == 1) {
-            return true;
-        }
-        return false;
+        return userChoice == 1;
     }
 
     private void putResulToAllGameResults (String prise) {
@@ -225,5 +172,15 @@ public class MontyHallGame {
 
     public String getAllGameResults () {
         return allGameResults.toString();
+    }
+
+    private void cheking () {
+        List<Integer> toExclude = new ArrayList<>(Arrays.asList(1, 2, 3));
+        System.out.println("За дверью " + toExclude.stream().filter(n -> n != userChoice & n != carDoorNum).toList() + " находится коза.");
+        Boolean stepTwo = userChoiceStepTwo();
+        if (stepTwo) {
+            userChoice = carDoorNum;
+        }
+        saveResults(stepTwo);
     }
 }
